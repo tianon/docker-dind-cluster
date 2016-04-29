@@ -13,7 +13,7 @@ services:
         command: [
             '--log-level', 'debug',
             '--storage-driver', 'overlay',
-            '--cluster-store', 'zk://cluster-store',
+            '--cluster-store', 'consul://cluster-store:8500',
             '--cluster-advertise', 'eth0:2375',
         ]
     docker-2:
@@ -29,9 +29,14 @@ services:
         command: [
             'manage',
             'docker-1:2375,docker-2:2375,docker-3:2375',
-            #'zk://cluster-store',
+            #'consul://cluster-store:8500',
         ]
 
     cluster-store:
-        image: tianon/zookeeper
+        image: consul
         restart: always
+        command: [
+            'agent',
+            '-dev',
+            '-client', '0.0.0.0',
+        ]
