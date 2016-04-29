@@ -3,7 +3,7 @@ version: '2'
 services:
 
     docker-1:
-        image: docker:1.11-rc-dind
+        image: docker:1.11-dind
         restart: always
         tty: true
         privileged: true
