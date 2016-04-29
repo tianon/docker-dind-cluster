@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+
+    docker-1:
+        image: docker:1.11-rc-dind
+        restart: always
+        tty: true
+        privileged: true
+        dns:
+            - 8.8.8.8
+            - 8.8.4.4
+        command: [
+            '--log-level', 'debug',
+            '--storage-driver', 'overlay',
+            '--cluster-store', 'zk://cluster-store',
+            '--cluster-advertise', 'eth0:2375',
+        ]
+    docker-2:
+        extends:
+            service: docker-1
+    docker-3:
+        extends:
+            service: docker-1
+
+    swarm:
+        image: swarm
+        restart: always
+        command: [
+            'manage',
+            'docker-1:2375,docker-2:2375,docker-3:2375',
+            #'zk://cluster-store',
+        ]
+
+    cluster-store:
+        image: tianon/zookeeper
+        restart: always
